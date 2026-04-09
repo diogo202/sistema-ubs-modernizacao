@@ -10,8 +10,8 @@ import br.gov.saude.ubs.config.LogConfig;
 
 public class UpdateController {
     // Substitua pela URL do seu arquivo de versão no GitHub/Gist (Raw)
-    private static final String VERSION_URL = "https://gist.githubusercontent.com/diogo202/.../version.txt";
-    private static final String JAR_URL = "https://github.com/diogo202/.../sistema.jar";
+    private static final String VERSION_URL = "https://raw.githubusercontent.com/diogo202/sistema-ubs-modernizacao/refs/heads/main/version.txt";
+    private static final String JAR_URL = "https://github.com/diogo202/sistema-ubs-modernizacao/raw/refs/heads/main/target/sistema-ubs-modernizacao-1.0-SNAPSHOT-jar-with-dependencies.jar";
     private static final String VERSAO_LOCAL = "1.0.0"; 
 
     public void verificarEAtualizar() {
