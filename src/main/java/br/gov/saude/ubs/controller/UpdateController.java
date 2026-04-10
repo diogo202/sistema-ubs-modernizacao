@@ -58,21 +58,26 @@ public class UpdateController {
     }
 
     private void extrairEExecutarBat() throws IOException {
-    InputStream is = getClass().getResourceAsStream("/update.bat");
-    if (is == null) {
-        LogConfig.erro("Arquivo update.bat não encontrado no JAR!", null);
-        return;
-    }
+        // Garante que a pasta database existe para o log do script
+        File dbFolder = new File("database");
+        if (!dbFolder.exists()) {
+            dbFolder.mkdirs();
+        }   
+        InputStream is = getClass().getResourceAsStream("/update.bat");
+        if (is == null) {
+            LogConfig.erro("Arquivo update.bat não encontrado no JAR!", null);
+            return;
+        }
 
-    Path caminhoDestino = Paths.get("update.bat");
-    Files.copy(is, caminhoDestino, StandardCopyOption.REPLACE_EXISTING);
-    is.close();
+        Path caminhoDestino = Paths.get("update.bat");
+        Files.copy(is, caminhoDestino, StandardCopyOption.REPLACE_EXISTING);
+        is.close();
 
-    LogConfig.info("Script extraído. Disparando processo externo...");
+        LogConfig.info("Script extraído. Disparando processo externo...");
 
-    // Criamos um ProcessBuilder para ter mais controle que o Runtime.exec
-    ProcessBuilder pb = new ProcessBuilder("cmd", "/c", "start", "/min", "update.bat");
-    pb.directory(new File(".")); // Força a execução na pasta atual do JAR
-    pb.start();
+        // Criamos um ProcessBuilder para ter mais controle que o Runtime.exec
+        ProcessBuilder pb = new ProcessBuilder("cmd", "/c", "start", "/min", "update.bat");
+        pb.directory(new File(".")); // Força a execução na pasta atual do JAR
+        pb.start();
     }
 }
