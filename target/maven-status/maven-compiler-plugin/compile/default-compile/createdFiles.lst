@@ -1,6 +1,7 @@
 br\gov\saude\ubs\config\Database.class
 br\gov\saude\ubs\controller\UpdateController.class
 br\gov\saude\ubs\view\MainFrame.class
+br\gov\saude\ubs\repository\GestanteRepository.class
 br\gov\saude\ubs\config\LogConfig.class
 br\gov\saude\ubs\Main.class
 br\gov\saude\ubs\repository\PacienteRepository.class
