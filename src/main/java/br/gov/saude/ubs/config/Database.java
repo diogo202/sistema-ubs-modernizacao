@@ -35,17 +35,44 @@ public class Database {
         }
     }
 
-    private static void criarTabelas(Connection conn) {
-        String sql = "CREATE TABLE IF NOT EXISTS pacientes (" +
-                     "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                     "nome TEXT NOT NULL," +
-                     "cns TEXT," +
-                     "data_nascimento TEXT" +
-                     ");";
+private static void criarTabelas(Connection conn) {
+    String sql = "CREATE TABLE IF NOT EXISTS pacientes (" +
+                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                 "nome TEXT NOT NULL," +
+                 "cpf TEXT UNIQUE," +
+                 "cns TEXT UNIQUE," +
+                 "data_nascimento TEXT," +
+                 "nome_mae TEXT," +
+                 // Endereço
+                 "logradouro TEXT," +
+                 "numero TEXT," +
+                 "bairro TEXT," +
+                 "cidade TEXT," +
+                 "complemento TEXT," +
+                 // Telefones
+                 "tel_principal TEXT," +
+                 "tel_secundario TEXT," +
+                 "tel_fixo TEXT," +
+                 "data_cadastro DATETIME DEFAULT CURRENT_TIMESTAMP" +
+                 ");";
+
+    String sqlGestante = "CREATE TABLE IF NOT EXISTS gestantes (" +
+                "id_gestante INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "id_paciente INTEGER NOT NULL," + // Chave estrangeira
+                "data_abertura_prenatal TEXT NOT NULL," + 
+                "dum TEXT," + // Data da Última Menstruação (comum em UBS)
+                "idade_gestacional_inicial INTEGER," +
+                "status TEXT DEFAULT 'ATIVO'," + // ATIVO ou CONCLUÍDO
+                "FOREIGN KEY (id_paciente) REFERENCES pacientes(id)" +
+                ");";
+
         try (Statement stmt = conn.createStatement()) {
             stmt.execute(sql);
+            stmt.execute(sqlGestante);
         } catch (SQLException e) {
             LogConfig.erro("Erro ao criar tabela de pacientes", e);
         }
     }
+
+
 }
