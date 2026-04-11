@@ -2,7 +2,12 @@ package br.gov.saude.ubs.repository;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+
 import br.gov.saude.ubs.config.Database;
 import br.gov.saude.ubs.config.LogConfig;
 import br.gov.saude.ubs.model.Paciente;
@@ -49,5 +54,28 @@ public class PacienteRepository {
             }
             return false;
         }
+    }
+
+    public List<Paciente> buscarTodos() {
+        List<Paciente> lista = new ArrayList<>();
+        String sql = "SELECT id, nome, cns, data_nascimento, tel_principal FROM pacientes ORDER BY nome ASC";
+    
+        try (Connection conn = Database.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+    
+            while (rs.next()) {
+                Paciente p = new Paciente();
+                p.setId(rs.getInt("id"));
+                p.setNome(rs.getString("nome"));
+                p.setCns(rs.getString("cns"));
+                p.setDataNascimento(rs.getString("data_nascimento"));
+                p.setTelPrincipal(rs.getString("tel_principal"));
+                lista.add(p);
+            }
+        } catch (SQLException e) {
+            LogConfig.erro("Erro ao buscar pacientes", e);
+        }
+        return lista;
     }
 }

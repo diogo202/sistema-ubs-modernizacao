@@ -8,10 +8,12 @@ import javax.swing.table.DefaultTableModel;
 import br.gov.saude.ubs.config.LogConfig;
 import br.gov.saude.ubs.controller.UpdateController;
 
+
 public class MainFrame extends JFrame {
     private JTable tabelaPacientes;
     private DefaultTableModel modeloTabela;
     private UpdateController updateController = new UpdateController();
+    private br.gov.saude.ubs.repository.PacienteRepository pacienteRepo = new br.gov.saude.ubs.repository.PacienteRepository();
     
     // Declarando os botões como atributos para acessá-los em diferentes métodos
     private JButton btnNovo;
@@ -21,8 +23,10 @@ public class MainFrame extends JFrame {
     public MainFrame() {
         configurarJanela();
         inicializarComponentes();
-        inicializarMenus();     // Adicionado: Chama a criação do menu
-        configurarBotoesAcoes(); // Adicionado: Conecta os eventos
+        inicializarMenus();     // Chama a criação do menu
+        configurarBotoesAcoes(); // Conecta os eventos
+        atualizarTabela(); // Carrega os dados na tabela ao iniciar
+        
         LogConfig.info("Interface principal carregada com sucesso.");
     }
 
@@ -130,6 +134,28 @@ public class MainFrame extends JFrame {
             // form.setVisible(true);
         });
     }
+
+    public void atualizarTabela() {
+        LogConfig.info("Atualizando visualização da tabela de pacientes...");
+    
+        // Limpa a tabela atual
+        modeloTabela.setRowCount(0);
+
+        // Busca os dados no banco
+        java.util.List<br.gov.saude.ubs.model.Paciente> pacientes = pacienteRepo.buscarTodos();
+
+        // Preenche o modelo da tabela
+        for (br.gov.saude.ubs.model.Paciente p : pacientes) {
+            modeloTabela.addRow(new Object[]{
+                p.getId(),
+                p.getNome(),
+                p.getCns(),
+                p.getDataNascimento(),
+                p.getTelPrincipal()
+            });
+        }
+    }
+
 
     public void exibir() {
         setVisible(true);

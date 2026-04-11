@@ -14,18 +14,13 @@ public class Main {
         LogConfig.configurar();
 
         // Teste rápido de inserção
-        Paciente p = new Paciente();
-        p.setNome("Maria Oliveira");
-        p.setCpf("123.456.789-00");
-        p.setCns("987654321000000");
-        p.setLogradouro("Rua das Flores");
-        p.setNumero("123");
-        p.setTelPrincipal("(14) 99999-8888"); // Celular
-        p.setTelSecundario("(14) 98888-7777"); // Recado
-        p.setTelFixo("(14) 3322-1100");       // Fixo
+        br.gov.saude.ubs.model.Paciente p = new br.gov.saude.ubs.model.Paciente();
+        p.setNome("Maria da Silva (Teste)");
+        p.setCpf("000.000.000-01");
+        p.setCns("700000000000001");
+        p.setTelPrincipal("(14) 99999-0000");
         
-        PacienteRepository repo = new PacienteRepository();
-        repo.salvar(p);
+        new br.gov.saude.ubs.repository.PacienteRepository().salvar(p);
         
         // No Swing, a interface deve ser iniciada na "Event Dispatch Thread"
         SwingUtilities.invokeLater(() -> {
