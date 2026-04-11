@@ -26,7 +26,7 @@ public class MainFrame extends JFrame {
         inicializarMenus();     // Chama a criação do menu
         configurarBotoesAcoes(); // Conecta os eventos
         atualizarTabela(); // Carrega os dados na tabela ao iniciar
-        
+
         LogConfig.info("Interface principal carregada com sucesso.");
     }
 
@@ -49,7 +49,7 @@ public class MainFrame extends JFrame {
         add(painelSuperior, BorderLayout.NORTH);
 
         // Tabela de Dados - Adicionada a coluna de Telefone para visualização rápida
-        String[] colunas = {"ID", "Nome do Paciente", "CNS", "Data de Nasc.", "Telefone Principal"};
+        String[] colunas = {"Nome do Paciente", "CNS", "Data de Nasc.", "Telefone Principal"};
         modeloTabela = new DefaultTableModel(colunas, 0);
         tabelaPacientes = new JTable(modeloTabela);
         JScrollPane scrollPane = new JScrollPane(tabelaPacientes);
@@ -127,11 +127,11 @@ public class MainFrame extends JFrame {
             }
         });
 
-        // Ação Novo Paciente (Placeholder para o próximo passo)
+        // Ação Novo Paciente
         btnNovo.addActionListener(e -> {
             LogConfig.info("Abrindo formulário de novo paciente.");
-            // FormularioPaciente form = new FormularioPaciente(this);
-            // form.setVisible(true);
+            FormularioPaciente form = new FormularioPaciente(this);
+            form.setVisible(true);
         });
     }
 
@@ -147,7 +147,6 @@ public class MainFrame extends JFrame {
         // Preenche o modelo da tabela
         for (br.gov.saude.ubs.model.Paciente p : pacientes) {
             modeloTabela.addRow(new Object[]{
-                p.getId(),
                 p.getNome(),
                 p.getCns(),
                 p.getDataNascimento(),
