@@ -12,6 +12,8 @@ public class FormularioPaciente extends JDialog {
     private JTextField txtNome, txtMae, txtRua, txtNum, txtBairro, txtCidade, txtComp;
     private JFormattedTextField txtCpf, txtCns, txtNascimento, txtCep, txtTel1, txtTel2, txtTel3;
     
+    private JLabel lblIdadeDinamica; // Label para mostrar a idade calculada
+
     private PacienteRepository repo = new PacienteRepository();
     private MainFrame parent;
 
@@ -28,48 +30,55 @@ public class FormularioPaciente extends JDialog {
 
         JTabbedPane abas = new JTabbedPane();
         
-        // Aba 1: Dados Pessoais
-        JPanel pnlDados = new JPanel(new GridLayout(6, 2, 10, 10)); // Aumentei para 6 linhas
+        // Aba 1: Dados Pessoais - Aumentamos para 7 linhas para acomodar tudo em pares
+        JPanel pnlDados = new JPanel(new GridLayout(7, 2, 10, 10)); 
         pnlDados.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-        
+
         pnlDados.add(new JLabel("Nome Completo:")); 
         txtNome = new JTextField(); pnlDados.add(txtNome);
-        
+
         pnlDados.add(new JLabel("CPF:")); 
         txtCpf = new JFormattedTextField(MascaraUtil.aplicar(MascaraUtil.MASCARA_CPF)); pnlDados.add(txtCpf);
-        
+
         pnlDados.add(new JLabel("CNS:")); 
         txtCns = new JFormattedTextField(MascaraUtil.aplicar(MascaraUtil.MASCARA_CNS)); pnlDados.add(txtCns);
-        
+
         pnlDados.add(new JLabel("Data Nasc (DD/MM/AAAA):")); 
-        txtNascimento = new JFormattedTextField(MascaraUtil.aplicar("##/##/####")); pnlDados.add(txtNascimento); JLabel lblIdade = new JLabel("Idade: -- anos"); pnlDados.add(lblIdade);
-        JLabel lblExibirIdade = new JLabel("Idade: --");
-        lblExibirIdade.setForeground(new Color(0, 102, 204));
-        lblExibirIdade.setFont(new Font("Arial", Font.BOLD, 12));
+        txtNascimento = new JFormattedTextField(MascaraUtil.aplicar(MascaraUtil.MASCARA_DATA)); pnlDados.add(txtNascimento);
+
+        // Label que será atualizado via código
+        pnlDados.add(new JLabel("Idade Calculada:"));
+        lblIdadeDinamica = new JLabel("-- anos"); 
+        lblIdadeDinamica.setForeground(new Color(0, 102, 204));
+        lblIdadeDinamica.setFont(new Font("Arial", Font.BOLD, 13));
+        pnlDados.add(lblIdadeDinamica); // Adiciona o label dinâmico para mostrar a idade
+
+        pnlDados.add(new JLabel("Nome da Mãe:")); 
+        txtMae = new JTextField(); pnlDados.add(txtMae);
+
+        // Campo vazio para manter o alinhamento do grid (paridade)
+        pnlDados.add(new JLabel("")); 
+        pnlDados.add(new JLabel(""));
 
         txtNascimento.addFocusListener(new java.awt.event.FocusAdapter() {
-        @Override
-        public void focusLost(java.awt.event.FocusEvent evt) {
-            String dataStr = txtNascimento.getText().trim();
-            if (dataStr.length() == 10 && !dataStr.contains("_")) {
-                try {
-                    java.time.format.DateTimeFormatter fmt = java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                    java.time.LocalDate nasc = java.time.LocalDate.parse(dataStr, fmt);
-                    long idade = java.time.temporal.ChronoUnit.YEARS.between(nasc, java.time.LocalDate.now());
-                    lblExibirIdade.setText("Idade: " + idade + " anos");
+            @Override
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                String dataTexto = txtNascimento.getText().replace("_", "").replace("/", "").trim();
+                if (dataTexto.length() == 8) {
+                    try {
+                        java.time.format.DateTimeFormatter fmt = java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                        java.time.LocalDate nasc = java.time.LocalDate.parse(txtNascimento.getText(), fmt);
+                        long idade = java.time.temporal.ChronoUnit.YEARS.between(nasc, java.time.LocalDate.now());
+                
+                        // Atualiza apenas o label dinâmico
+                        lblIdadeDinamica.setText(idade + " anos");
+                        LogConfig.info("Idade calculada para " + txtNome.getText() + ": " + idade);
                     } catch (Exception e) {
-                        lblExibirIdade.setText("Data Inválida");
+                        lblIdadeDinamica.setText("Data inválida");
                     }
                 }
             }
         });
-
-        // Adicione o label ao painel (ajuste o GridLayout para 7 linhas se necessário)
-        pnlDados.add(new JLabel("Cálculo Automático:"));
-        pnlDados.add(lblExibirIdade);
-
-        pnlDados.add(new JLabel("Nome da Mãe:")); 
-        txtMae = new JTextField(); pnlDados.add(txtMae);
         
         // Aba 2: Localização
         JPanel pnlEndereco = new JPanel(new GridLayout(6, 2, 10, 10));
