@@ -14,7 +14,8 @@ public class MainFrame extends JFrame {
     private DefaultTableModel modeloTabela;
     private UpdateController updateController = new UpdateController();
     private br.gov.saude.ubs.repository.PacienteRepository pacienteRepo = new br.gov.saude.ubs.repository.PacienteRepository();
-    
+    private static final String VERSAO_SISTEMA = "v1.0.4"; 
+
     // Declarando os botões como atributos para acessá-los em diferentes métodos
     private JButton btnNovo;
     private JButton btnAtualizar;
@@ -49,22 +50,40 @@ public class MainFrame extends JFrame {
         add(painelSuperior, BorderLayout.NORTH);
 
         // Tabela de Dados - Adicionada a coluna de Telefone para visualização rápida
-        String[] colunas = {"Nome do Paciente", "CNS", "Data de Nasc.", "Telefone Principal"};
+        String[] colunas = {"ID", "Nome do Paciente", "CNS", "Idade", "Telefone Principal"};
         modeloTabela = new DefaultTableModel(colunas, 0);
         tabelaPacientes = new JTable(modeloTabela);
+
+        // Esconde a coluna ID (índice 0) mantendo os dados acessíveis via código
+        tabelaPacientes.getColumnModel().getColumn(0).setMinWidth(0);
+        tabelaPacientes.getColumnModel().getColumn(0).setMaxWidth(0);
+        tabelaPacientes.getColumnModel().getColumn(0).setWidth(0);
+
         JScrollPane scrollPane = new JScrollPane(tabelaPacientes);
         add(scrollPane, BorderLayout.CENTER);
 
-        // Painel Inferior
+        // Painel Inferior (Botões + Rodapé de Versão)
+        JPanel painelInferior = new JPanel(new BorderLayout()); // Mudamos para BorderLayout
+        
+        // Sub-painel para os botões
         JPanel painelBotoes = new JPanel();
         btnNovo = new JButton("Novo Paciente");
-        btnVincularGestante = new JButton("Vincular Pré-Natal"); // Criado o botão aqui
+        btnVincularGestante = new JButton("Vincular Pré-Natal");
         btnAtualizar = new JButton("Verificar Atualizações");
-        
         painelBotoes.add(btnNovo);
         painelBotoes.add(btnVincularGestante);
         painelBotoes.add(btnAtualizar);
-        add(painelBotoes, BorderLayout.SOUTH);
+        
+        // Label da Versão no rodapé
+        JLabel lblVersao = new JLabel(" Versão: " + VERSAO_SISTEMA + "  ");
+        lblVersao.setFont(new Font("Arial", Font.ITALIC, 10));
+        lblVersao.setForeground(Color.GRAY);
+        
+        // O painel de botões ficará à esquerda e o label de versão à direita
+        painelInferior.add(painelBotoes, BorderLayout.CENTER);
+        painelInferior.add(lblVersao, BorderLayout.EAST); // Alinhado à direita no rodapé
+
+        add(painelInferior, BorderLayout.SOUTH);
     }
 
     private void inicializarMenus() {
@@ -143,15 +162,29 @@ public class MainFrame extends JFrame {
 
         // Busca os dados no banco
         java.util.List<br.gov.saude.ubs.model.Paciente> pacientes = pacienteRepo.buscarTodos();
-
+        
         // Preenche o modelo da tabela
         for (br.gov.saude.ubs.model.Paciente p : pacientes) {
+            String idadeStr = calcularIdadeSimples(p.getDataNascimento());
             modeloTabela.addRow(new Object[]{
-                p.getNome(),
-                p.getCns(),
-                p.getDataNascimento(),
-                p.getTelPrincipal()
+                p.getId(),          // Coluna 0 (será oculta)
+                p.getNome(),        // Coluna 1
+                p.getCns(),         // Coluna 2
+                idadeStr,           // Coluna 3 (Idade calculada)
+                p.getTelPrincipal() // Coluna 4 (Telefone Principal)
             });
+        }
+    }
+
+    // Método auxiliar no MainFrame
+    private String calcularIdadeSimples(String dataNasc) {
+        try {
+            // Assume que no banco salvamos como DD/MM/YYYY por enquanto
+            java.time.format.DateTimeFormatter fmt = java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            java.time.LocalDate nasc = java.time.LocalDate.parse(dataNasc, fmt);
+            return String.valueOf(java.time.temporal.ChronoUnit.YEARS.between(nasc, java.time.LocalDate.now()));
+        } catch (Exception e) {
+            return "??";
         }
     }
 

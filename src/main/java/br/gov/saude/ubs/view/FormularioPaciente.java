@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import br.gov.saude.ubs.model.Paciente;
 import br.gov.saude.ubs.repository.PacienteRepository;
+import br.gov.saude.ubs.util.MascaraUtil;
 import br.gov.saude.ubs.config.LogConfig;
 
 public class FormularioPaciente extends JDialog {
@@ -36,9 +37,15 @@ public class FormularioPaciente extends JDialog {
         pnlDados.add(new JLabel("Nome Completo:")); txtNome = new JTextField(); pnlDados.add(txtNome);
         pnlDados.add(new JLabel("CPF:")); txtCpf = new JTextField(); pnlDados.add(txtCpf);
         pnlDados.add(new JLabel("CNS:")); txtCns = new JTextField(); pnlDados.add(txtCns);
-        pnlDados.add(new JLabel("Data Nasc (DD/MM/AAAA):")); txtNascimento = new JTextField(); pnlDados.add(txtNascimento);
+        pnlDados.add(new JLabel("Data Nasc (DD/MM/AAAA):")); txtNascimento = new JFormattedTextField(MascaraUtil.aplicar("##/##/####")); pnlDados.add(txtNascimento); JLabel lblIdade = new JLabel("Idade: -- anos");
         pnlDados.add(new JLabel("Nome da Mãe:")); txtMae = new JTextField(); pnlDados.add(txtMae);
         
+        txtNascimento.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+            calcularIdade(txtNascimento.getText(), lblIdade);
+        }
+        });
+
         // Aba 2: Endereço
         JPanel pnlEndereco = new JPanel(new GridLayout(5, 2, 10, 10));
         pnlEndereco.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
@@ -97,6 +104,18 @@ public class FormularioPaciente extends JDialog {
             dispose(); // Fecha o formulário
         } else {
             JOptionPane.showMessageDialog(this, "Erro ao salvar. Verifique se o CPF/CNS já existe.");
+        }
+    }
+
+    private void calcularIdade(String dataStr, JLabel label) {
+        try {
+            java.time.format.DateTimeFormatter fmt = java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            java.time.LocalDate nasc = java.time.LocalDate.parse(dataStr, fmt);
+            java.time.LocalDate hoje = java.time.LocalDate.now();
+            long idade = java.time.temporal.ChronoUnit.YEARS.between(nasc, hoje);
+            label.setText("Idade: " + idade + " anos");
+        } catch (Exception e) {
+            label.setText("Idade: -- anos");
         }
     }
 }
