@@ -14,6 +14,7 @@ public class Paciente {
     private String bairro;
     private String cidade;
     private String complemento;
+    private String cep;
     
     // 3 campos de telefone
     private String telPrincipal;   // Celular
@@ -26,7 +27,7 @@ public class Paciente {
     // Construtor completo
     public Paciente(Integer id, String nome, String cpf, String cns, String dataNascimento, String nomeMae,
                     String logradouro, String numero, String bairro, String cidade, String complemento,
-                    String telPrincipal, String telSecundario, String telFixo) {
+                    String cep, String telPrincipal, String telSecundario, String telFixo) {
         this.id = id;
         this.nome = nome;
         this.cpf = cpf;
@@ -38,6 +39,7 @@ public class Paciente {
         this.bairro = bairro;
         this.cidade = cidade;
         this.complemento = complemento;
+        this.cep = cep;
         this.telPrincipal = telPrincipal;
         this.telSecundario = telSecundario;
         this.telFixo = telFixo;
@@ -76,6 +78,9 @@ public class Paciente {
 
     public String getComplemento() { return complemento; }
     public void setComplemento(String complemento) { this.complemento = complemento; }
+
+    public String getCep() { return cep; }
+    public void setCep(String cep) { this.cep = cep; }
 
     public String getTelPrincipal() { return telPrincipal; }
     public void setTelPrincipal(String telPrincipal) { this.telPrincipal = telPrincipal; }

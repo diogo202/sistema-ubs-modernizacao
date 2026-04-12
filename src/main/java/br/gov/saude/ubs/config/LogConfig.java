@@ -1,5 +1,6 @@
 package br.gov.saude.ubs.config;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.logging.*;
 
@@ -8,16 +9,33 @@ public class LogConfig {
 
     public static void configurar() {
         try {
-            // Define o arquivo de log e permite "append" (não apaga o anterior)
-            FileHandler fh = new FileHandler("sistema_ubs.log", true);
-            fh.setFormatter(new SimpleFormatter()); // Formato legível por humanos
+            // Cria pasta de logs se não existir
+            File folder = new File("logs");
+            if (!folder.exists()) folder.mkdir();
+
+            // Configura arquivo de log (ubs_sistema.log) - mantém os últimos 5 arquivos de 1MB
+            FileHandler fh = new FileHandler("logs/ubs_sistema.log", 1048576, 5, true);
+            fh.setFormatter(new SimpleFormatter());
             logger.addHandler(fh);
-            logger.setLevel(Level.ALL);
+
+            // Configura log no console
+            ConsoleHandler ch = new ConsoleHandler();
+            ch.setFormatter(new SimpleFormatter());
+            logger.addHandler(ch);
+
+            logger.info("Sistema de Log iniciado com sucesso.");
         } catch (IOException e) {
-            System.err.println("Não foi possível iniciar o arquivo de log: " + e.getMessage());
+            System.err.println("Erro ao configurar logs: " + e.getMessage());
         }
     }
 
-    public static void info(String msg) { logger.info(msg); }
-    public static void erro(String msg, Exception e) { logger.log(Level.SEVERE, msg, e); }
+    // Método estático - acessado via LogConfig.info()
+    public static void info(String mensagem) {
+        logger.info(mensagem);
+    }
+
+    // Método estático para erros - aceita mensagem e exceção (opcional)
+    public static void erro(String mensagem, Exception e) {
+        logger.log(Level.SEVERE, mensagem + " | Erro: " + e.getMessage(), e);
+    }
 }

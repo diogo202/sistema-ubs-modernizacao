@@ -74,9 +74,9 @@ public class MainFrame extends JFrame {
         painelBotoes.add(btnAtualizar);
         
         // Label da Versão no rodapé
-        JLabel lblVersao = new JLabel(" Versão: " + carregarVersao() + "  "); // Espaços para dar um pouco de margem
+        String versaoAtual = carregarVersao(); 
+        JLabel lblVersao = new JLabel(" Versão: " + versaoAtual + "  ");
         lblVersao.setFont(new Font("Arial", Font.ITALIC, 10));
-        lblVersao.setForeground(Color.GRAY);
         
         // O painel de botões ficará à esquerda e o label de versão à direita
         painelInferior.add(painelBotoes, BorderLayout.CENTER);
@@ -121,7 +121,7 @@ public class MainFrame extends JFrame {
             try {
                 Object idObj = tabelaPacientes.getValueAt(linhaSelecionada, 0);
                 String nomePaciente = (String) tabelaPacientes.getValueAt(linhaSelecionada, 1);
-                int idPaciente = Integer.parseInt(idObj.toString());
+                int idPaciente = (idObj != null) ? Integer.parseInt(idObj.toString()) : 0;
 
                 LogConfig.info("Abertura de diálogo de vínculo para Paciente: " + nomePaciente);
 
@@ -197,12 +197,14 @@ public class MainFrame extends JFrame {
     private String carregarVersao() {
         java.util.Properties prop = new java.util.Properties();
         try (java.io.InputStream input = getClass().getResourceAsStream("/version.properties")) {
-            if (input == null) return "v?.?";
-            prop.load(input);
-            return prop.getProperty("version", "v?.?");
+            if (input != null) {
+                prop.load(input);
+                return prop.getProperty("version", "v2.8.4-dev");
+            }
         } catch (java.io.IOException ex) {
-            return "v?.?";
+            LogConfig.erro("Erro ao carregar version.properties", ex);
         }
+        return "v2.8.4-dev"; // Retorna o fallback se o input for null ou der erro
     }
 
     public void exibir() {

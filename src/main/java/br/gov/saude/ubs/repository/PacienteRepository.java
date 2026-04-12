@@ -17,9 +17,9 @@ public class PacienteRepository {
     public boolean salvar(Paciente paciente) {
         String sql = "INSERT INTO pacientes (" +
                      "nome, cpf, cns, data_nascimento, nome_mae, " +
-                     "logradouro, numero, bairro, cidade, complemento, " +
+                     "logradouro, numero, bairro, cidade, complemento, cep, " +
                      "tel_principal, tel_secundario, tel_fixo" +
-                     ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                     ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = Database.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -36,11 +36,12 @@ public class PacienteRepository {
             pstmt.setString(8, paciente.getBairro());
             pstmt.setString(9, paciente.getCidade());
             pstmt.setString(10, paciente.getComplemento());
+            pstmt.setString(11, paciente.getCep());
             
             // Telefones
-            pstmt.setString(11, paciente.getTelPrincipal());
-            pstmt.setString(12, paciente.getTelSecundario());
-            pstmt.setString(13, paciente.getTelFixo());
+            pstmt.setString(12, paciente.getTelPrincipal());
+            pstmt.setString(13, paciente.getTelSecundario());
+            pstmt.setString(14, paciente.getTelFixo());
 
             pstmt.executeUpdate();
             LogConfig.info("Paciente salvo com sucesso: " + paciente.getNome() + " (CPF: " + paciente.getCpf() + ")");

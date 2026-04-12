@@ -46,6 +46,7 @@ public class Database {
                      "bairro TEXT," +
                      "cidade TEXT," +
                      "complemento TEXT," +
+                     "cep TEXT," +
                      "tel_principal TEXT," +
                      "tel_secundario TEXT," +
                      "tel_fixo TEXT," +
