@@ -14,7 +14,6 @@ public class MainFrame extends JFrame {
     private DefaultTableModel modeloTabela;
     private UpdateController updateController = new UpdateController();
     private br.gov.saude.ubs.repository.PacienteRepository pacienteRepo = new br.gov.saude.ubs.repository.PacienteRepository();
-    private static final String VERSAO_SISTEMA = "v1.0.4"; 
 
     // Declarando os botões como atributos para acessá-los em diferentes métodos
     private JButton btnNovo;
@@ -75,7 +74,7 @@ public class MainFrame extends JFrame {
         painelBotoes.add(btnAtualizar);
         
         // Label da Versão no rodapé
-        JLabel lblVersao = new JLabel(" Versão: " + VERSAO_SISTEMA + "  ");
+        JLabel lblVersao = new JLabel(" Versão: " + carregarVersao() + "  "); // Espaços para dar um pouco de margem
         lblVersao.setFont(new Font("Arial", Font.ITALIC, 10));
         lblVersao.setForeground(Color.GRAY);
         
@@ -178,16 +177,33 @@ public class MainFrame extends JFrame {
 
     // Método auxiliar no MainFrame
     private String calcularIdadeSimples(String dataNasc) {
+        if (dataNasc == null || dataNasc.isEmpty()) return "--";
         try {
-            // Assume que no banco salvamos como DD/MM/YYYY por enquanto
-            java.time.format.DateTimeFormatter fmt = java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            java.time.LocalDate nasc = java.time.LocalDate.parse(dataNasc, fmt);
+            // Agora tenta ler o formato YYYY-MM-DD que virá do banco
+            java.time.LocalDate nasc = java.time.LocalDate.parse(dataNasc);
             return String.valueOf(java.time.temporal.ChronoUnit.YEARS.between(nasc, java.time.LocalDate.now()));
         } catch (Exception e) {
-            return "??";
+            // Se falhar, tenta o formato BR caso ainda existam dados antigos
+            try {
+                java.time.format.DateTimeFormatter fmt = java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                java.time.LocalDate nasc = java.time.LocalDate.parse(dataNasc, fmt);
+                return String.valueOf(java.time.temporal.ChronoUnit.YEARS.between(nasc, java.time.LocalDate.now()));
+            } catch (Exception ex) {
+                return "??";
+            }
         }
     }
 
+    private String carregarVersao() {
+        java.util.Properties prop = new java.util.Properties();
+        try (java.io.InputStream input = getClass().getResourceAsStream("/version.properties")) {
+            if (input == null) return "v?.?";
+            prop.load(input);
+            return prop.getProperty("version", "v?.?");
+        } catch (java.io.IOException ex) {
+            return "v?.?";
+        }
+    }
 
     public void exibir() {
         setVisible(true);

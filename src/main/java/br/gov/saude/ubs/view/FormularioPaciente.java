@@ -86,7 +86,7 @@ public class FormularioPaciente extends JDialog {
         p.setNome(txtNome.getText());
         p.setCpf(txtCpf.getText());
         p.setCns(txtCns.getText());
-        p.setDataNascimento(txtNascimento.getText());
+        p.setDataNascimento(MascaraUtil.paraISO(txtNascimento.getText()));
         p.setNomeMae(txtMae.getText());
         p.setLogradouro(txtRua.getText());
         p.setNumero(txtNum.getText());
