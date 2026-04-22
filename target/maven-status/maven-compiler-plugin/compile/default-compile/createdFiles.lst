@@ -1,11 +1,11 @@
 br\gov\saude\ubs\config\Database.class
+br\gov\saude\ubs\controller\UpdateController.class
 br\gov\saude\ubs\view\MainFrame.class
+br\gov\saude\ubs\repository\GestanteRepository.class
 br\gov\saude\ubs\config\LogConfig.class
 br\gov\saude\ubs\Main.class
-br\gov\saude\ubs\view\FormularioPaciente$1.class
-br\gov\saude\ubs\controller\UpdateController.class
-br\gov\saude\ubs\repository\GestanteRepository.class
 br\gov\saude\ubs\repository\PacienteRepository.class
 br\gov\saude\ubs\view\FormularioPaciente.class
 br\gov\saude\ubs\model\Paciente.class
 br\gov\saude\ubs\util\MascaraUtil.class
+br\gov\saude\ubs\view\FormularioPaciente$1.class
